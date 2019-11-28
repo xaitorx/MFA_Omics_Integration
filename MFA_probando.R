@@ -1,3 +1,4 @@
+library(RCurl)
 library(FactoMineR)
 library(ggplot2)
 library(pheatmap)
@@ -5,7 +6,7 @@ library(ggrepel)
 library(factoextra)
 
 
-log2_mfa_data <- read.csv("C:/Users/Aitor/Desktop/Grecia/Paintomics/Our data/log2_mfa_data.csv", row.names=1)
+log2_mfa_data <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/log2_mfa_data.csv"), row.names=1)
 log2_mfa_data <- as.data.frame(t(log2_mfa_data))
 
 res <- MFA(log2_mfa_data, group=c(15445, 212, 798), type=c(rep("c",3)),
@@ -64,7 +65,7 @@ row.names(var_Dim2) <- row.names(coord_var)
 
 # annotate (there is duplicate names for some variables)
 #load annotation file
-todo_annot <- read.csv("C:/Users/Aitor/Desktop/Grecia/MFA/todo_annot.csv", row.names=1, header=T, na.strings=c("","NA"))
+todo_annot <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/todo_annot.csv"), row.names=1, header=T, na.strings=c("","NA"))
 
 var_Dim2_annot <- cbind(todo_annot[match(row.names(var_Dim2), todo_annot$X),], var_Dim2)
 var_Dim2_annot$type <- c(rep("mRNA", 15445), rep("miRNA", 212), rep("metabolome", 798))

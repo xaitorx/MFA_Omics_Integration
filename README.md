@@ -1,6 +1,8 @@
 # MFA_Omics_Integration
  Integrate transcriptome, metabolome changes in TNBC cells upon IRE1 inhibition
 
+1. MFA_probando.R
+2. Reactome_fgsea.R
 
 # IRE1 signalling in Breast Cancer
 

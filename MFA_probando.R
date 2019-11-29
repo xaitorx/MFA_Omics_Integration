@@ -4,6 +4,7 @@ library(ggplot2)
 library(pheatmap)
 library(ggrepel)
 library(factoextra)
+library(RCurl)
 
 
 log2_mfa_data <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/log2_mfa_data.csv"), row.names=1)

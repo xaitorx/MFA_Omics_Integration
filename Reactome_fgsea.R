@@ -3,13 +3,15 @@
 # ChEBI to All pathways
 # ENSEMBL to All pathways
 # miRBase to All pathways
-# Paste them together
+# Paste them together rbind()
 library(plyr)
 library(fgsea)
+library(ggplot2)
+library(RCurl)
 
 ### data frame with ENSEMBL/CHEBI/miRNA identifiers annotated to reactome pathways
 ### split into 1 list of IDs/pathway
-Reactome_all <- read.csv("C:/Users/Aitor/Desktop/Grecia/MFA/Reactome/Reactome_all.csv", stringsAsFactors=FALSE)
+Reactome_all <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/Reactome_all.csv"), stringsAsFactors=FALSE)
 Reactome_all <- Reactome_all[order(Reactome_all$pathway),]
 
 #count numer of elements/pathway
@@ -27,25 +29,36 @@ anotacion <- as.data.frame(unique(Reactome_all[,2:3]))
 
 
 ### Perform GSEA with these lists on our preranked list of IDs
-var_dim2_annot <- read.csv("C:/Users/Aitor/Desktop/Grecia/MFA/var_dim2_annot.csv")
+var_dim2_annot <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/var_dim2_annot.csv"))
 
 ranking <- var_dim2_annot[,c(7,4)]
-ranking2 <- ranking[!is.na(ranking$REACTOME),]
+ranking <- ranking[!is.na(ranking$REACTOME),]
 
 # consolidate duplicated IDs, order ranking
-ranking3 <- ddply(ranking2,1,numcolwise(mean))
-ranking3 <- ranking3[order(ranking3$contrib, decreasing = TRUE),]
+ranking <- ddply(ranking,1,numcolwise(mean))
+ranking <- ranking[order(ranking$contrib, decreasing = TRUE),]
 
-rankings <- ranking3$contrib
-names(rankings) <- ranking3$REACTOME
+ranking_ooo <- ranking$contrib
+names(ranking_ooo) <- ranking$REACTOME
 
 ###Perform GSEA with list of reactome pathways
 fgseaRes <- fgsea(pathways = lista1, 
-                  stats = rankings,
+                  stats = ranking_ooo,
                   minSize=15,
                   maxSize=500,
                   nperm=100000)
 
 
 fgseaRes_annot <- merge(anotacion, fgseaRes, by.x = 1, by.y = 1)
+write.csv(fgseaRes_annot[,-9], "fgseaRes_annot.csv")
 
+### plot
+plotEnrichment(lista1[[(fgseaRes[130,])$pathway]],ranking_ooo) +
+  ggtitle("Triglyceride catabolism", size) 
+  # change for number of row
+
+topPathwaysUp <- fgseaRes[ES > 0][head(order(pval), n=10), name]
+topPathwaysDown <- fgseaRes[ES < 0][head(order(pval), n=10), name]
+topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
+plotGseaTable(lista1[topPathways], rankings, fgseaRes, 
+              gseaParam = 0.5)

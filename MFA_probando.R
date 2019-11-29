@@ -148,4 +148,4 @@ grafico + geom_segment(colour="firebrick1", aes(x=Y, xend=Y, y=-5,size=1, yend=c
   coord_cartesian(ylim = c(0, 0.4))
 
 
-  + scale_y_continuous(expand = c(0, 0)) # if you dont want to "expand" axis
+#  + scale_y_continuous(expand = c(0, 0)) # if you dont want to "expand" axis

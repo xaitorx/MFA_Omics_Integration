@@ -57,8 +57,4 @@ plotEnrichment(lista1[[(fgseaRes[130,])$pathway]],ranking_ooo) +
   ggtitle("Triglyceride catabolism", size) 
   # change for number of row
 
-topPathwaysUp <- fgseaRes[ES > 0][head(order(pval), n=10), name]
-topPathwaysDown <- fgseaRes[ES < 0][head(order(pval), n=10), name]
-topPathways <- c(topPathwaysUp, rev(topPathwaysDown))
-plotGseaTable(lista1[topPathways], rankings, fgseaRes, 
-              gseaParam = 0.5)
+

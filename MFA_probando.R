@@ -1,4 +1,3 @@
-library(RCurl)
 library(FactoMineR)
 library(ggplot2)
 library(pheatmap)

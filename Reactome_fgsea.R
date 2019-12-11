@@ -31,20 +31,20 @@ anotacion <- as.data.frame(unique(Reactome_all[,2:3]))
 ### Perform GSEA with these lists on our preranked list of IDs
 var_dim2_annot <- read.csv(text = getURL("https://raw.githubusercontent.com/xaitorx/MFA_Omics_Integration/v1/data/var_dim2_annot.csv"))
 
-ranking <- var_dim2_annot[,c(7,4)]
+ranking <- loadings_OPLS_annot[,c(6,4)]
 ranking <- ranking[!is.na(ranking$REACTOME),]
 
 # consolidate duplicated IDs, order ranking
-ranking <- ddply(ranking,1,numcolwise(mean))
-ranking <- ranking[order(ranking$contrib, decreasing = TRUE),]
+ranking <- ddply(ranking,2,numcolwise(mean))
+ranking <- ranking[order(ranking$p1, decreasing = TRUE),]
 
-ranking_ooo <- ranking$contrib
+ranking_ooo <- ranking$p1
 names(ranking_ooo) <- ranking$REACTOME
 
 ###Perform GSEA with list of reactome pathways
 fgseaRes <- fgsea(pathways = lista1, 
                   stats = ranking_ooo,
-                  minSize=15,
+                  minSize=5,
                   maxSize=500,
                   nperm=100000)
 
@@ -53,8 +53,8 @@ fgseaRes_annot <- merge(anotacion, fgseaRes, by.x = 1, by.y = 1)
 write.csv(fgseaRes_annot[,-9], "fgseaRes_annot.csv")
 
 ### plot
-plotEnrichment(lista1[[(fgseaRes[130,])$pathway]],ranking_ooo) +
-  ggtitle("Triglyceride catabolism", size) 
+plotEnrichment(lista1[[(fgseaRes[447,])$pathway]],ranking_ooo) +
+  ggtitle("XBP1(S) activates chaperone genes") 
   # change for number of row
 
 
